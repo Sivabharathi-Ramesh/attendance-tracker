@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View Attendance</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+    <h3>Auroville Institute Of Applied Technology</h3>
+<h2>Software Development & Machine Learning</h2>
+<h3>IInd Year | 3rd Semester</h3>
+  <h2>View Attendance</h2>
+
+  <label for="courseSelect">Course:</label>
+  <select id="courseSelect">
+  
+      <option value="Software Engineering">Software Engineering</option>
+    <option value="Mobile Applications">Mobile Applications</option>
+    <option value="Data Structure">Data Structure</option>
+      <option value="Mathematics">Mathematics</option>
+    <option value="Information Security">Information Security</option>
+    <option value="Frontend Development">Frontend Development</option>
+     <option value="Basic Indian Language">Basic Indian Language</option>
+    <option value="Information Security lab">Information Security lab</option>
+    <option value="Frontend Development lab">Frontend Development lab</option>
+    <option value="Mobile Applications lab">Mobile Applications lab</option>
+    <option value="Data Structure lab">Data Structure lab</option>
+    <option value="Integral Yoga">Integral Yoga</option>
+  </select>
+
+  <label for="dateSelect">Date:</label>
+  <input type="date" id="dateSelect">
+
+  <button onclick="loadAttendance()">Show Records</button>
+
+  <div id="recordsTable"></div>
+
+  <a href="index.html">⬅ Back</a>
+</body>
+</html>
