@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel{% endblock %}
+{% block content %}
+<section class="panel">
+    <h2 style="text-align: center; margin-bottom: 20px;">Admin Panel</h2>
+    <div class="cards" style="justify-content: center;">
+      <a class="card" href="{{ url_for('manage_students') }}" style="background-color: #17a2b8;">Manage Students</a>
+      <a class="card" href="{{ url_for('manage_subjects') }}" style="background-color: #17a2b8;">Manage Subjects</a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<section class="panel" style="max-width: 500px;">
+    <h2>Login</h2>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('login') }}">
+        <div class="form-row" style="flex-direction: column; align-items: stretch;">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required style="padding: 8px; margin-top: 5px;">
+        </div>
+        <div class="form-row" style="flex-direction: column; align-items: stretch; margin-top: 15px;">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required style="padding: 8px; margin-top: 5px;">
+        </div>
+        <button type="submit" class="btn" style="margin-top: 20px;">Login</button>
+    </form>
+    <p style="margin-top: 20px;">
+        Don't have an account? <a href="{{ url_for('register') }}">Register here</a>
+    </p>
+</section>
+{% endblock %}

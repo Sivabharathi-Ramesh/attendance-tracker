@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Manage Subjects{% endblock %}
+{% block content %}
+<section class="panel">
+    <h2>Manage Subjects</h2>
+
+    <form action="{{ url_for('add_subject') }}" method="POST" class="form-row" style="border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 20px;">
+        <label for="name">Subject Name:</label>
+        <input type="text" id="name" name="name" required>
+        <button type="submit" class="btn">Add Subject</button>
+    </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div style="background-color: {% if category == 'error' %}#f8d7da{% else %}#d4edda{% endif %}; color: {% if category == 'error' %}#721c24{% else %}#155724{% endif %}; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <h3>Existing Subjects</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Subject Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for subject in subjects %}
+            <tr>
+                <form action="{{ url_for('edit_subject', subject_id=subject.id) }}" method="POST">
+                    <td><input type="text" name="name" value="{{ subject.name }}" required></td>
+                    <td>
+                        <button type="submit" class="btn" style="background-color: #007bff;">Update</button>
+                        <form action="{{ url_for('delete_subject', subject_id=subject.id) }}" method="POST" style="display:inline;">
+                           <button type="submit" class="btn" style="background-color: #dc3545;" onclick="return confirm('Are you sure? This will delete all attendance records for this subject.');">Delete</button>
+                        </form>
+                    </td>
+                </form>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="2">No subjects found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

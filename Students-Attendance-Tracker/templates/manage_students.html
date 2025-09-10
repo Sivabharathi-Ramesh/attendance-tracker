@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Manage Students{% endblock %}
+{% block content %}
+<section class="panel">
+    <h2>Manage Students</h2>
+
+    <form action="{{ url_for('add_student') }}" method="POST" class="form-row" style="border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 20px;">
+        <label for="roll_no">Roll No:</label>
+        <input type="text" id="roll_no" name="roll_no" required>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <button type="submit" class="btn">Add Student</button>
+    </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div style="background-color: {% if category == 'error' %}#f8d7da{% else %}#d4edda{% endif %}; color: {% if category == 'error' %}#721c24{% else %}#155724{% endif %}; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <h3>Existing Students</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Roll No</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <form action="{{ url_for('edit_student', student_id=student.id) }}" method="POST">
+                    <td><input type="text" name="roll_no" value="{{ student.roll_no }}" required></td>
+                    <td><input type="text" name="name" value="{{ student.name }}" required></td>
+                    <td>
+                        <button type="submit" class="btn" style="background-color: #007bff;">Update</button>
+                        <form action="{{ url_for('delete_student', student_id=student.id) }}" method="POST" style="display:inline;">
+                           <button type="submit" class="btn" style="background-color: #dc3545;" onclick="return confirm('Are you sure? This will delete all their attendance records.');">Delete</button>
+                        </form>
+                    </td>
+                </form>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3">No students found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

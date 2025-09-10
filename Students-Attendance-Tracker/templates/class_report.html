@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Class Summary Report{% endblock %}
+{% block content %}
+<section class="panel">
+    <h2>Class Summary Report</h2>
+    <div class="form-row">
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate">
+
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate">
+        
+        <label for="subjectSelect">Filter by Subject (Optional):</label>
+        <select id="subjectSelect"></select>
+
+        <button id="generateReportBtn" class="btn">Generate Report</button>
+    </div>
+
+    <div id="exportContainer" style="margin-top: 20px;">
+    </div>
+
+    <div id="reportArea" style="margin-top: 10px;">
+    </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+    if (document.querySelector("#generateReportBtn")) {
+        const subjectSelect = document.getElementById("subjectSelect");
+        
+        const response = await fetch('/api/subjects');
+        const subjects = await response.json();
+        subjectSelect.innerHTML = '<option value="">All Subjects</option>' + 
+            subjects.map(s => `<option value="${s.id}">${s.name}</option>`).join("");
+
+        const generateBtn = document.getElementById("generateReportBtn");
+        const reportArea = document.getElementById("reportArea");
+        const exportContainer = document.getElementById("exportContainer");
+
+        generateBtn.addEventListener("click", async () => {
+            const startDate = document.getElementById("startDate").value;
+            const endDate = document.getElementById("endDate").value;
+            const subjectId = subjectSelect.value;
+
+            if (!startDate || !endDate) {
+                alert("Please select both a start and end date.");
+                return;
+            }
+
+            reportArea.innerHTML = "<p>Generating report...</p>";
+            exportContainer.innerHTML = "";
+
+            const params = new URLSearchParams({
+                start_date: startDate,
+                end_date: endDate,
+                subject_id: subjectId
+            });
+
+            const reportResponse = await fetch(`/api/class_report?${params.toString()}`);
+            const data = await reportResponse.json();
+
+            if (!data.ok) {
+                reportArea.innerHTML = `<p style="color: red;">Error: ${data.error || 'Failed to generate report.'}</p>`;
+                return;
+            }
+            
+            if (data.records.length === 0) {
+                reportArea.innerHTML = "<p>No attendance data found for the selected criteria.</p>";
+                return;
+            }
+
+            const exportUrl = `/export/class_report?${params.toString()}`;
+            exportContainer.innerHTML = `<a href="${exportUrl}" class="btn" style="background-color: #28a745;">Export to CSV</a>`;
+            
+            let html = `
+                <h3>Report from ${startDate} to ${endDate}</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Roll No</th>
+                            <th>Student Name</th>
+                            <th>Classes Attended</th>
+                            <th>Total Classes</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            data.records.forEach((rec, index) => {
+                const percentage = rec.total_classes > 0 ? (rec.present_count / rec.total_classes) * 100 : 0;
+                const percentageColor = percentage >= 75 ? 'green' : 'red';
+
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${rec.roll_no}</td>
+                        <td>${rec.name}</td>
+                        <td>${rec.present_count}</td>
+                        <td>${rec.total_classes}</td>
+                        <td style="color: ${percentageColor}; font-weight: bold;">${percentage.toFixed(2)}%</td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table>`;
+            reportArea.innerHTML = html;
+        });
+    }
+});
+</script>
+{% endblock %}
